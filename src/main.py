@@ -9,6 +9,9 @@ from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
 from models import db, User
+import flask
+
+from models import db, User, Characters, Planets, Favorites
 #from models import Person
 
 app = Flask(__name__)
@@ -38,6 +41,42 @@ def handle_hello():
     }
 
     return jsonify(response_body), 200
+
+@app.route('/users/<int:user_id>/favorites', methods=['GET'])
+def get_favorites(user_id):
+    #todos.pop(position)
+    return flask.jsonify("test string")
+
+@app.route('/users/<int:user_id>/favorites', methods=['POST'])
+def update_favorites(user_id):
+    #todos.pop(position)
+    return flask.jsonify("test string")
+
+@app.route('/favorite/<int:favorite_id>', methods=['DELETE'])
+def delete_favorites(favorite_id):
+    #todos.pop(position)
+    return flask.jsonify("test string")
+
+@app.route('/people', methods=['GET'])
+def get_characters():
+    #todos.pop(position)
+    user = Characters.query.get(id)
+    return flask.jsonify(user)
+
+@app.route('/people/<int:position>', methods=['GET'])
+def get_individual_characters(position):
+    #todos.pop(position)
+    return flask.jsonify("test string")
+
+@app.route('/planets', methods=['GET'])
+def get_planets():
+    #todos.pop(position)
+    return flask.jsonify("test string")
+
+@app.route('/planets/<int:position>', methods=['GET'])
+def get_individual_planets(position):
+    #todos.pop(position)
+    return flask.jsonify("test string")
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
