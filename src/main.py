@@ -60,8 +60,11 @@ def delete_favorites(favorite_id):
 @app.route('/people', methods=['GET'])
 def get_characters():
     #todos.pop(position)
-    user = Characters.query.get(id)
-    return flask.jsonify(user)
+    #user = Characters.query.all()
+    #user = db.session.query(Characters)
+    #session.query(Address).filter(Address.person == person).all()
+    return jsonify(Characters.get_all_chars())
+    return user
 
 @app.route('/people/<int:position>', methods=['GET'])
 def get_individual_characters(position):

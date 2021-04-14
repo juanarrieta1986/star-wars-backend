@@ -42,6 +42,18 @@ class Characters(db.Model):
     birth_year = db.Column(db.String(250),  nullable=False)
     gender = db.Column(db.String(250),  nullable=False)
 
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            # do not serialize the password, its a security breach
+        }
+    
+    def get_all_chars():
+        all_chars = Characters.query.all()
+        all_chars = list(map(lambda x: x.serialize(), all_chars))
+        return all_chars
+
 
 class Planets(db.Model):
     __tablename__ = 'planets'
@@ -63,6 +75,6 @@ class Favorites(db.Model):
     # Here we define columns for the table address.
     # Notice that each column is also a normal Python instance attribute.
     id = db.Column(db.Integer, primary_key=True)
-    userId = db.Column(db.String, ForeignKey('user.id'))
-    charId = db.Column(db.String(250),  ForeignKey('characters.id'))
-    planetId = db.Column(db.String(250),  ForeignKey('planets.id'))
+    userId = db.Column(db.Integer, ForeignKey('user.id'))
+    charId = db.Column(db.Integer,  ForeignKey('characters.id'))
+    planetId = db.Column(db.Integer,  ForeignKey('planets.id'))
