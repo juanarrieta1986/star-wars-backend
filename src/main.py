@@ -59,22 +59,16 @@ def delete_favorites(favorite_id):
 
 @app.route('/people', methods=['GET'])
 def get_characters():
-    #todos.pop(position)
-    #user = Characters.query.all()
-    #user = db.session.query(Characters)
-    #session.query(Address).filter(Address.person == person).all()
     return jsonify(Characters.get_all_chars())
-    return user
 
 @app.route('/people/<int:position>', methods=['GET'])
 def get_individual_characters(position):
-    #todos.pop(position)
-    return flask.jsonify("test string")
+    return jsonify(Characters.get_one_char(position))
 
 @app.route('/planets', methods=['GET'])
 def get_planets():
     #todos.pop(position)
-    return flask.jsonify("test string")
+    return jsonify(Planets.get_all_planets())
 
 @app.route('/planets/<int:position>', methods=['GET'])
 def get_individual_planets(position):

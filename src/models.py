@@ -53,6 +53,11 @@ class Characters(db.Model):
         all_chars = Characters.query.all()
         all_chars = list(map(lambda x: x.serialize(), all_chars))
         return all_chars
+    
+    def get_one_char(position):
+        one_char = Characters.query.filter_by(id = position)
+        one_char = list(map(lambda x: x.serialize(), one_char))
+        return one_char
 
 
 class Planets(db.Model):
@@ -70,6 +75,18 @@ class Planets(db.Model):
     surface_water = db.Column(db.String(250),  nullable=False)
     population = db.Column(db.String(250),  nullable=False)
 
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            # do not serialize the password, its a security breach
+        }
+
+    def get_all_planets():
+        all_planets = Planets.query.all()
+        all_planets = list(map(lambda x: x.serialize(), all_planets))
+        return all_planets
+
 class Favorites(db.Model):
     __tablename__ = 'favorites'
     # Here we define columns for the table address.
@@ -78,3 +95,15 @@ class Favorites(db.Model):
     userId = db.Column(db.Integer, ForeignKey('user.id'))
     charId = db.Column(db.Integer,  ForeignKey('characters.id'))
     planetId = db.Column(db.Integer,  ForeignKey('planets.id'))
+
+    def serialize(self):
+        return {
+            "charId": self.charId,
+            "planetId": self.planetId,
+            # do not serialize the password, its a security breach
+        }
+
+    def get_favorites():
+        favorites = Favorites.query.all()
+        favorites = list(map(lambda x: x.serialize(), favorites))
+        return favorites
