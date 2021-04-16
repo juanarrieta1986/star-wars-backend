@@ -8,11 +8,11 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User
+from models import db, User, Characters, Planets, Favorites
 import flask
 
-from models import db, User, Characters, Planets, Favorites
-#from models import Person
+#import JWT for tokenization
+from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity, create_access_token
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
@@ -22,6 +22,10 @@ MIGRATE = Migrate(app, db)
 db.init_app(app)
 CORS(app)
 setup_admin(app)
+
+# config for jwt
+app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_SECRET_KEY")
+jwt = JWTManager(app)
 
 # Handle/serialize errors like a JSON object
 @app.errorhandler(APIException)
@@ -55,8 +59,12 @@ def update_favorites(user_id):
     return jsonify(Favorites.add_favorite(user_id, char_id, planet_id, fav_type))
 
 @app.route('/favorite/<int:favorite_id>', methods=['DELETE'])
+@jwt_required()
 def delete_favorites(favorite_id):
+    current_id = get_jwt_identity()
+    user = Favorites.query.get(favorite_id)
     return jsonify(Favorites.delete_favorite(favorite_id))
+    #return "ok"
 
 @app.route('/people', methods=['GET'])
 def get_characters():
@@ -74,6 +82,48 @@ def get_planets():
 @app.route('/planets/<int:position>', methods=['GET'])
 def get_individual_planets(position):
     return jsonify(Planets.get_one_planet(position))
+
+@app.route('/login', methods=['POST']) 
+def login():
+    email = request.json.get("name", None)
+    password = request.json.get("password", None)
+
+    # valida si estan vacios los ingresos
+    if email is None:
+        return jsonify({"msg": "No email was provided"}), 400
+    if password is None:
+        return jsonify({"msg": "No password was provided"}), 400
+
+    # para proteger contraseñas usen hashed_password
+    # busca usuario en BBDD
+    user = User.query.filter_by(name=email, password=password).first()
+    if user is None:
+        return jsonify({"msg": "Invalid username or password"}), 401
+    else:
+        # crear token
+        my_token = create_access_token(identity=user.id)
+        return jsonify({"token": my_token})
+    
+@app.route('/register', methods=['POST'])
+def register_user():
+    email = request.json.get("name", None)
+    password = request.json.get("password", None)
+
+    # valida si estan vacios los ingresos
+    if email is None:
+        return jsonify({"msg": "No email was provided"}), 400
+    if password is None:
+        return jsonify({"msg": "No password was provided"}), 400
+    
+    # busca usuario en BBDD
+    user = User.query.filter_by(email=email).first()
+    if user:
+        # the user was not found on the database
+        return jsonify({"msg": "User already exists"}), 401
+    else:
+        # crea usuario nuevo
+        # crea registro nuevo en BBDD de 
+        return jsonify({"msg": "User created successfully"}), 200
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':

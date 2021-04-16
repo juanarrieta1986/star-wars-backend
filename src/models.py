@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, ForeignKey, Integer, String, insert
+from sqlalchemy import Column, ForeignKey, Integer, String, insert, delete
 
 db = SQLAlchemy()
 
@@ -24,7 +24,7 @@ class User(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "email": self.email,
+            "email": self.name,
             # do not serialize the password, its a security breach
         }
 
@@ -137,8 +137,7 @@ class Favorites(db.Model):
         return "ok"
     
     def delete_favorite(favorite_ID):
-        #obj = User.query.filter_by(id=123).one()
-        delete = Favorites.query.filter(Favorites.id == favorite_ID)
-        session.delete(delete)
-        session.commit()
+        delete_fav = Favorites.query.get(favorite_ID)
+        db.session.delete(delete_fav)
+        db.session.commit()
         return "Ok"
