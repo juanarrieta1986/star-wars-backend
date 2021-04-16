@@ -44,15 +44,15 @@ def handle_hello():
 
 @app.route('/users/<int:user_id>/favorites', methods=['GET'])
 def get_favorites(user_id):
-    #todos.pop(position)
-    return flask.jsonify("test string")
+    return jsonify(Favorites.get_favorites(user_id))
 
 @app.route('/users/<int:user_id>/favorites', methods=['POST'])
 def update_favorites(user_id):
     char_id = request.json.get("charID", None)
     planet_id = request.json.get("planetID", None)
     fav_type = request.json.get("entityType", None)
-    return jsonify(Favorites.add_favorite(favorite_id))
+    #user_ID,char_ID,planet_ID,fav_type
+    return jsonify(Favorites.add_favorite(user_id, char_id, planet_id, fav_type))
 
 @app.route('/favorite/<int:favorite_id>', methods=['DELETE'])
 def delete_favorites(favorite_id):
