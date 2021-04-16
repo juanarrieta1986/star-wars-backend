@@ -29,11 +29,18 @@ class User(db.Model):
         }
     
     def create_user(user_Name,user_Pass):
-        if fav_type == 'char':
-            add = Favorites(name=user_Name, password=user_Pass)
-            db.session.add(add)   
+        user = User.query.filter_by(name=user_Name).first()
+
+        if user:
+            # the user was not found on the database
+            return "User already exists"
+        else:
+            # crea usuario nuevo
+            createUser = User(name=user_Name, password=user_Pass)
+            db.session.add(createUser)   
             db.session.commit()
-        return "ok"
+            # crea registro nuevo en BBDD de 
+            return "User created successfully"
 
 class Characters(db.Model):
     __tablename__ = 'characters'

@@ -115,19 +115,12 @@ def register_user():
     # valida si estan vacios los ingresos
     if email is None:
         return jsonify({"msg": "No email was provided"}), 400
-    if password is None:
+    elif password is None:
         return jsonify({"msg": "No password was provided"}), 400
-    
-    # busca usuario en BBDD
-    user = User.query.filter_by(name=email).first()
-    if user:
-        # the user was not found on the database
-        return jsonify({"msg": "User already exists"}), 401
     else:
-        # crea usuario nuevo
-        create_user
-        # crea registro nuevo en BBDD de 
-        return jsonify({"msg": "User created successfully"}), 200
+        return jsonify({"msg": User.create_user(email,password)}), 200
+    return "ok"
+    
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
