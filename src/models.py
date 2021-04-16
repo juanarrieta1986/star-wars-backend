@@ -27,6 +27,13 @@ class User(db.Model):
             "email": self.email,
             # do not serialize the password, its a security breach
         }
+    
+    def add_favorite(user_ID,char_ID,planet_ID,fav_type):
+        if fav_type == 'char':
+            add = (insert(Favorites).values(userId=user_ID, charId=char_ID, planetId=None))
+        else:
+            add = (insert(Favorites).values(userId=user_ID, charId=None, planetId=planet_ID))
+        return add
 
 class Characters(db.Model):
     __tablename__ = 'characters'
@@ -86,6 +93,11 @@ class Planets(db.Model):
         all_planets = Planets.query.all()
         all_planets = list(map(lambda x: x.serialize(), all_planets))
         return all_planets
+    
+    def get_one_planet(position):
+        one_planet = Characters.query.filter_by(id = position)
+        one_planet = list(map(lambda x: x.serialize(), one_planet))
+        return one_planet
 
 class Favorites(db.Model):
     __tablename__ = 'favorites'
@@ -93,8 +105,9 @@ class Favorites(db.Model):
     # Notice that each column is also a normal Python instance attribute.
     id = db.Column(db.Integer, primary_key=True)
     userId = db.Column(db.Integer, ForeignKey('user.id'))
-    charId = db.Column(db.Integer,  ForeignKey('characters.id'))
-    planetId = db.Column(db.Integer,  ForeignKey('planets.id'))
+    charId = db.Column(db.Integer,  ForeignKey('characters.id'), nullable=True)
+    planetId = db.Column(db.Integer,  ForeignKey('planets.id'), nullable=True)
+    #favorite_type = db.Column(db.String(250), nullable=False)
 
     def serialize(self):
         return {
@@ -107,3 +120,10 @@ class Favorites(db.Model):
         favorites = Favorites.query.all()
         favorites = list(map(lambda x: x.serialize(), favorites))
         return favorites
+    
+    def delete_favorite(favorite_ID):
+        #obj = User.query.filter_by(id=123).one()
+        delete = Favorites.query.filter(Favorites.id == favorite_ID)
+        session.delete(delete)
+        session.commit()
+        return "Ok"

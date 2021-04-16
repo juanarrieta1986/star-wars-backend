@@ -49,13 +49,14 @@ def get_favorites(user_id):
 
 @app.route('/users/<int:user_id>/favorites', methods=['POST'])
 def update_favorites(user_id):
-    #todos.pop(position)
-    return flask.jsonify("test string")
+    char_id = request.json.get("charID", None)
+    planet_id = request.json.get("planetID", None)
+    fav_type = request.json.get("entityType", None)
+    return jsonify(Favorites.add_favorite(favorite_id))
 
 @app.route('/favorite/<int:favorite_id>', methods=['DELETE'])
 def delete_favorites(favorite_id):
-    #todos.pop(position)
-    return flask.jsonify("test string")
+    return jsonify(Favorites.delete_favorite(favorite_id))
 
 @app.route('/people', methods=['GET'])
 def get_characters():
@@ -72,8 +73,7 @@ def get_planets():
 
 @app.route('/planets/<int:position>', methods=['GET'])
 def get_individual_planets(position):
-    #todos.pop(position)
-    return flask.jsonify("test string")
+    return jsonify(Planets.get_one_planet(position))
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
