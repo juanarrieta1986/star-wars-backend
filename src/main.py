@@ -14,6 +14,9 @@ import flask
 #import JWT for tokenization
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity, create_access_token
 
+#from models import db, User, Characters, Planets, Favorites
+#from models import Person
+
 app = Flask(__name__)
 app.url_map.strict_slashes = False
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_CONNECTION_STRING')
@@ -116,12 +119,13 @@ def register_user():
         return jsonify({"msg": "No password was provided"}), 400
     
     # busca usuario en BBDD
-    user = User.query.filter_by(email=email).first()
+    user = User.query.filter_by(name=email).first()
     if user:
         # the user was not found on the database
         return jsonify({"msg": "User already exists"}), 401
     else:
         # crea usuario nuevo
+        create_user
         # crea registro nuevo en BBDD de 
         return jsonify({"msg": "User created successfully"}), 200
 

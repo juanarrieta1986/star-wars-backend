@@ -27,6 +27,13 @@ class User(db.Model):
             "email": self.name,
             # do not serialize the password, its a security breach
         }
+    
+    def create_user(user_Name,user_Pass):
+        if fav_type == 'char':
+            add = Favorites(name=user_Name, password=user_Pass)
+            db.session.add(add)   
+            db.session.commit()
+        return "ok"
 
 class Characters(db.Model):
     __tablename__ = 'characters'
@@ -118,19 +125,11 @@ class Favorites(db.Model):
     
     def add_favorite(user_ID,char_ID,planet_ID,fav_type):
 
-        #one_planet = Characters.query.filter_by(id = position)
-        #one_planet = list(map(lambda x: x.serialize(), one_planet))
-        #return one_planet
-        #add = list(map(lambda x: x.serialize(), add))
-
         if fav_type == 'char':
-            #one_addplanet = list(map(lambda x: x.serialize(), add))
-            #add = (insert(Favorites).values(userId=user_ID, charId=char_ID, planetId=None))
             add = Favorites(userId=user_ID, charId=char_ID, planetId=None)
             db.session.add(add)   
             db.session.commit()
         else:
-            #add = (insert(Favorites).values(userId=user_ID, charId=None, planetId=planet_ID))
             add = Favorites(userId=user_ID, charId=None, planetId=planet_ID)
             db.session.add(add)   
             db.session.commit()
