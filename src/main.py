@@ -61,6 +61,20 @@ def update_favorites(user_id):
     #user_ID,char_ID,planet_ID,fav_type
     return jsonify(Favorites.add_favorite(user_id, char_id, planet_id, fav_type))
 
+@app.route('/register', methods=['POST'])
+def register_user():
+    email = request.json.get("name", None)
+    password = request.json.get("password", None)
+
+    # valida si estan vacios los ingresos
+    if email is None:
+        return jsonify({"msg": "No email was provided"}), 400
+    elif password is None:
+        return jsonify({"msg": "No password was provided"}), 400
+    else:
+        return jsonify({"msg": User.create_user(email,password)}), 200
+    return "ok"
+
 @app.route('/favorite/<int:favorite_id>', methods=['DELETE'])
 @jwt_required()
 def delete_favorites(favorite_id):
@@ -106,21 +120,6 @@ def login():
         # crear token
         my_token = create_access_token(identity=user.id)
         return jsonify({"token": my_token})
-    
-@app.route('/register', methods=['POST'])
-def register_user():
-    email = request.json.get("name", None)
-    password = request.json.get("password", None)
-
-    # valida si estan vacios los ingresos
-    if email is None:
-        return jsonify({"msg": "No email was provided"}), 400
-    elif password is None:
-        return jsonify({"msg": "No password was provided"}), 400
-    else:
-        return jsonify({"msg": User.create_user(email,password)}), 200
-    return "ok"
-    
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':

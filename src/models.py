@@ -1,7 +1,11 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, ForeignKey, Integer, String, insert, delete
+from sqlalchemy.orm import relationship
 
-db = SQLAlchemy()
+from sqlalchemy.dialects.postgresql.base import UUID
+#import uuid
+#db = SQLAlchemy()
+db.UUID = UUID
 
 #class User(db.Model):
 #    id = db.Column(db.Integer, primary_key=True)
@@ -19,7 +23,7 @@ class User(db.Model):
     password = db.Column(db.String(250), nullable=False)
 
     def __repr__(self):
-        return '<User %r>' % self.username
+        return '<User %r>' % self.name
 
     def serialize(self):
         return {
@@ -55,6 +59,7 @@ class Characters(db.Model):
     eye_color = db.Column(db.String(250),  nullable=False)
     birth_year = db.Column(db.String(250),  nullable=False)
     gender = db.Column(db.String(250),  nullable=False)
+    cGUID = db.Column(db.UUID(as_uuid=True), nullable=False)
 
     def serialize(self):
         return {
@@ -88,6 +93,7 @@ class Planets(db.Model):
     terrain = db.Column(db.String(250),  nullable=False)
     surface_water = db.Column(db.String(250),  nullable=False)
     population = db.Column(db.String(250),  nullable=False)
+    pGUID = db.Column(db.String(60), nullable=False)
 
     def serialize(self):
         return {
@@ -115,6 +121,9 @@ class Favorites(db.Model):
     charId = db.Column(db.Integer,  ForeignKey('characters.id'), nullable=True)
     planetId = db.Column(db.Integer,  ForeignKey('planets.id'), nullable=True)
     #favorite_type = db.Column(db.String(250), nullable=False)
+    user = relationship(User)
+    characters = relationship(Characters)
+    planets = relationship(Planets)
 
     def serialize(self):
         return {
@@ -133,11 +142,11 @@ class Favorites(db.Model):
     def add_favorite(user_ID,char_ID,planet_ID,fav_type):
 
         if fav_type == 'char':
-            add = Favorites(userId=user_ID, charId=char_ID, planetId=None)
+            add = Favorites(userId=user_ID, charId=char_ID, planetId=1)
             db.session.add(add)   
             db.session.commit()
         else:
-            add = Favorites(userId=user_ID, charId=None, planetId=planet_ID)
+            add = Favorites(userId=user_ID, charId=1, planetId=planet_ID)
             db.session.add(add)   
             db.session.commit()
         return "ok"
